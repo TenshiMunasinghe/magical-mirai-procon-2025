@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TextAlive App - Miku 2025</title>
+    <style>
+      body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: white;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 30px;
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      }
+
+      #header {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      #header a {
+        color: #fff;
+        text-decoration: none;
+        font-size: 24px;
+        font-weight: bold;
+      }
+
+      #overlay {
+        text-align: center;
+        padding: 20px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        margin-bottom: 20px;
+      }
+
+      #text {
+        font-size: 48px;
+        font-weight: bold;
+        text-align: center;
+        margin: 30px 0;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 10px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+      }
+
+      .info {
+        text-align: center;
+        margin: 20px 0;
+        font-size: 18px;
+      }
+
+      #control {
+        display: none;
+        text-align: center;
+        margin: 20px 0;
+      }
+
+      button {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 12px 24px;
+        margin: 5px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease;
+      }
+
+      button:hover:not(:disabled) {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      #position {
+        font-size: 16px;
+        margin: 10px 0;
+      }
+
+      audio {
+        width: 100%;
+        margin: 20px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="header">
+        <a href="#">TextAlive App - Miku 2025</a>
+      </div>
+
+      <div id="overlay">
+        <h2>マジカルミライ 2025 課題曲</h2>
+        <p>楽曲の読み込みが完了したら再生ボタンを押してください</p>
+      </div>
+
+      <div id="text">-</div>
+
+      <div class="info">
+        <div id="artist">アーティスト: <span>読み込み中...</span></div>
+        <div id="song">楽曲: <span>読み込み中...</span></div>
+        <div id="position">再生位置: <strong>0</strong> 秒</div>
+      </div>
+
+      <audio id="media" controls></audio>
+
+      <div id="control">
+        <button class="play" disabled>▶ 再生</button>
+        <button id="pause" disabled>⏸ 一時停止</button>
+        <button id="rewind" disabled>⏪ 巻き戻し</button>
+        <button id="jump" disabled>🎵 歌詞頭出し</button>
+      </div>
+    </div>
+
+    <!-- Vite will handle module resolution automatically -->
+    <script type="module" src="./src/index.ts"></script>
+  </body>
+</html>
