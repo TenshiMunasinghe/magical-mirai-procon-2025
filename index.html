@@ -172,13 +172,11 @@
       /* Main Container */
       .container {
         position: relative;
-        max-width: 90%;
         margin: 0 auto;
         padding: 20px;
         z-index: 10;
         min-height: 100vh;
         display: flex;
-        align-items: center;
         justify-content: center;
         overflow: hidden;
       }
@@ -272,15 +270,16 @@
       /* Lyrics Text Display - Scattered like stars */
       #text {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 70%; /* Upper portion of screen for sky */
+        width: 75%;
+        height: 22rem; /* Upper portion of screen for sky */
         font-size: 32px;
         font-weight: 300;
-        text-align: left;
+        text-align: center;
         min-height: auto;
-        display: block;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
         background: transparent;
         color: #ffffff;
         border: none;
@@ -295,20 +294,15 @@
         pointer-events: none;
       }
 
-      #text::before {
-        display: none;
-      }
-
       /* Individual scattered characters */
       .star-unit {
         animation: starTwinkle 3s ease-in-out infinite;
         animation-delay: calc(var(--unit-index) * 0.3s);
         transform-origin: center;
+        white-space: nowrap;
       }
 
       .star-char {
-        position: relative;
-        display: inline-block;
         margin: 0 1px;
         padding: 0;
         animation: charGlow 4s ease-in-out infinite;

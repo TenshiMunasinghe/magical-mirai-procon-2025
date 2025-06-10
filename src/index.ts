@@ -8,83 +8,33 @@ const el = document.querySelector('#text');
 
 // 単語が発声されていたら #text に表示する
 // Show words being vocalized in #text
-let lastAddedWord: IRenderingUnit | null = null;
+let lastAddedPhrase: IRenderingUnit | null = null;
 let unitCount = 0;
+
 const animateWord = function (now: number, unit: IRenderingUnit) {
-  if (unit.contains(now)) {
-    if (!el) return;
+  if (!unit.contains(now)) return;
+  if (!el) return;
 
-    const text = unit.toString();
+  const phrase = unit.parent;
+  const text = phrase.toString();
 
-    // Debug duplicate detection
-    const isDuplicate =
-      lastAddedWord &&
-      lastAddedWord.startTime === unit.startTime &&
-      lastAddedWord.toString() === text;
+  // Debug duplicate detection
+  const isPhraseRendered =
+    lastAddedPhrase &&
+    lastAddedPhrase.startTime === phrase.startTime &&
+    lastAddedPhrase.toString() === text;
 
-    console.log(`=== Processing "${text}" ===`);
-    console.log(
-      `StartTime: ${unit.startTime}, LastWordStartTime: ${lastAddedWord?.startTime}`
-    );
-    console.log(`IsDuplicate: ${isDuplicate}`);
+  console.log(`=== Processing "${text}" ===`);
+  console.log(
+    `StartTime: ${unit.startTime}, LastWordStartTime: ${lastAddedPhrase?.startTime}`
+  );
+  console.log(`isPhraseRendered: ${isPhraseRendered}`);
 
-    if (isDuplicate) {
-      console.log('SKIPPING - Duplicate word');
-      return; // すでに表示されている場合はスキップ
-    }
-
-    // Create scattered star elements across the sky
-    const createScatteredStarElements = (
-      text: string,
-      startIndex: number = 0
-    ) => {
-      const fragment = document.createDocumentFragment();
-      const skyHeight = window.innerHeight * 0.7; // Upper 70% of screen
-
-      // Create a single unit container for the text
-      const unitContainer = document.createElement('span');
-      unitContainer.className = 'star-unit';
-      unitContainer.style.position = 'absolute';
-      unitContainer.style.whiteSpace = 'nowrap';
-      unitContainer.style.setProperty('--unit-index', startIndex.toString());
-
-      // Left to right positioning with compact spacing
-      const leftMargin = 180; // Avoid control panel area (top-left)
-      const rightMargin = 100; // Prevent going off right edge
-      const unitSpacing = 40; // Tighter spacing between units
-      const availableWidth = window.innerWidth - leftMargin - rightMargin;
-      const baseX = leftMargin + (el.textContent?.length ?? 1) * unitSpacing;
-
-      // Small horizontal variation to avoid perfect alignment
-      const horizontalVariation = (Math.random() - 0.5) * 32; // ±10px smaller variation
-      const x = Math.min(baseX + horizontalVariation, availableWidth); // Ensure doesn't exceed right margin
-
-      // Vertical scatter within a more compact range, avoiding control panel
-      const topMargin = 120; // Lower to avoid control panel
-      const compactHeight = Math.min(skyHeight * 0.4, 120); // More compact vertical range
-      const y = topMargin + Math.random() * compactHeight;
-
-      unitContainer.style.left = x + 'px';
-      unitContainer.style.top = y + 'px';
-
-      // Add individual characters to the unit container
-      text.split('').forEach((char, index) => {
-        const span = document.createElement('span');
-        span.className = 'star-char';
-        span.style.setProperty('--char-index', (startIndex + index).toString());
-        span.style.position = 'relative';
-        span.style.display = 'inline-block';
-        span.textContent = char;
-        unitContainer.appendChild(span);
-      });
-
-      fragment.appendChild(unitContainer);
-      return fragment;
-    };
-
-    const hasIntervalPassed = !lastAddedWord
+  // TODO: fucking refactor thi
+  if (!isPhraseRendered) {
+    const hasIntervalPassed = !lastAddedPhrase
       ? false
-      : now - lastAddedWord.endTime > TEXT_UPDATE_INTERVAL;
+      : now - lastAddedPhrase.endTime > TEXT_UPDATE_INTERVAL;
     const isOverMaxTextLength =
       (el.textContent?.length ?? 0) + text.length > MAX_TEXT_LENGTH;
 
@@ -92,19 +42,61 @@ const animateWord = function (now: number, unit: IRenderingUnit) {
       `HasIntervalPassed: ${hasIntervalPassed}, IsOverMaxLength: ${isOverMaxTextLength}`
     );
 
+    // Create scattered star elements across the sky
+    const createScatteredStarElements = (
+      phrase: IRenderingUnit,
+      startIndex: number = 0
+    ) => {
+      const fragment = document.createDocumentFragment();
+
+      // Create a single unit container for the text
+      const unitContainer = document.createElement('span');
+      unitContainer.className = 'star-unit';
+      unitContainer.style.setProperty('--unit-index', startIndex.toString());
+
+      // Vertical scatter within a more compact range, avoiding control panel
+      const y = Math.random() * 5;
+      const negative = Math.random() > 0.5 ? -1 : 1;
+
+      unitContainer.style.marginTop = `${negative * y}rem`;
+
+      // Add individual characters to the unit container
+      phrase.children.forEach((unit, index) => {
+        const lastChar = unit.toString()[unit.toString().length - 1];
+
+        const isAlphabet = (char: string) => {
+          return /^[a-zA-Z]$/.test(char);
+        };
+
+        // 英単語の間にはスペースを入れる
+        const textContent = isAlphabet(lastChar)
+          ? unit.toString() + ' '
+          : unit.toString();
+
+        const span = document.createElement('span');
+        span.className = 'star-char';
+        span.style.setProperty('--char-index', (startIndex + index).toString());
+        span.textContent = textContent;
+        unitContainer.appendChild(span);
+      });
+
+      fragment.appendChild(unitContainer);
+      return fragment;
+    };
+
     if (isOverMaxTextLength) {
       // Only clear when we exceed max text length
       console.log('CLEARING - Over max length');
       el.innerHTML = ''; // Clear existing content including positioned elements
-      el.appendChild(createScatteredStarElements(text, 0)); // Start from 0 when clearing
+      el.appendChild(createScatteredStarElements(phrase, 0)); // Start from 0 when clearing
       unitCount = 1;
     } else {
       // Always append new words (don't clear on time intervals)
       console.log('APPENDING - Normal flow');
-      el.appendChild(createScatteredStarElements(text, unitCount));
+      el.appendChild(createScatteredStarElements(phrase, unitCount));
       unitCount += 1;
     }
-    lastAddedWord = unit;
+    lastAddedPhrase = phrase;
   }
 };
 
@@ -298,7 +290,7 @@ function onThrottledTimeUpdate(position: number) {
     }
 
     // Reset state when auto-clearing
-    lastAddedWord = null;
+    lastAddedPhrase = null;
     unitCount = 0;
     console.log('STATE RESET - Auto clear triggered');
   }
@@ -315,47 +307,11 @@ function onPlay() {
   playCityAnimations();
 }
 
-// 再生が一時停止・停止したら歌詞表示をリセット
-// Reset lyrics text field when music playback is paused or stopped
 function onPause() {
-  const text = document.querySelector<HTMLElement>('#text');
-  if (text) {
-    // Fade out existing stars before clearing
-    const existingStars = text.querySelectorAll('.star-char');
-    existingStars.forEach((star, index) => {
-      setTimeout(() => {
-        (star as HTMLElement).style.opacity = '0';
-        (star as HTMLElement).style.transform = 'scale(0.5)';
-        (star as HTMLElement).style.transition =
-          'opacity 0.3s ease-out, transform 0.3s ease-out';
-        (star as HTMLElement).remove();
-      }, index * 30); // Faster stagger for pause
-    });
-  }
-
-  lastAddedWord = null; // Reset last added word
-  unitCount = 0; // Reset unit count
   pauseCityAnimations();
 }
 
 function onStop() {
-  const text = document.querySelector<HTMLElement>('#text');
-  if (text) {
-    // Fade out existing stars before clearing
-    const existingStars = text.querySelectorAll('.star-char');
-    existingStars.forEach((star, index) => {
-      setTimeout(() => {
-        (star as HTMLElement).style.opacity = '0';
-        (star as HTMLElement).style.transform = 'scale(0.5)';
-        (star as HTMLElement).style.transition =
-          'opacity 0.3s ease-out, transform 0.3s ease-out';
-        (star as HTMLElement).remove();
-      }, index * 30); // Faster stagger for stop
-    });
-  }
-
-  lastAddedWord = null; // Reset last added word
-  unitCount = 0; // Reset unit count
   pauseCityAnimations();
 }
 
