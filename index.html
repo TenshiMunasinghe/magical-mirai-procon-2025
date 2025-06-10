@@ -284,8 +284,6 @@
         color: #ffffff;
         border: none;
         border-radius: 0;
-        text-shadow: 0 0 8px rgba(255, 255, 255, 0.9),
-          0 0 16px rgba(255, 255, 255, 0.7), 0 0 24px rgba(255, 255, 255, 0.5);
         box-shadow: none;
         overflow: visible;
         backdrop-filter: none;
@@ -294,25 +292,35 @@
         pointer-events: none;
       }
 
-      /* Individual scattered characters */
-      .star-unit {
-        animation: starTwinkle 3s ease-in-out infinite;
-        animation-delay: calc(var(--unit-index) * 0.3s);
+      .star-phrase {
+        display: flex;
         transform-origin: center;
         white-space: nowrap;
+        gap: 0.25rem;
       }
 
-      .star-char {
+      .star-unit {
         margin: 0 1px;
         padding: 0;
-        animation: charGlow 4s ease-in-out infinite;
-        animation-delay: calc(var(--char-index) * 0.1s);
         transform-origin: center;
         letter-spacing: normal;
         white-space: nowrap;
+        color: #6c6c6c; /* dim color */
+        animation: twinkleDim 3s ease-in-out infinite,
+          scaleText 3s ease-in-out infinite;
+        --random-delay: calc(var(--i, 0) * 0.1s);
       }
 
-      .star-char::before {
+      .star-unit.animate {
+        animation: twinkleBright 3s ease-in-out infinite,
+          unitGlow 4s ease-in-out infinite, scaleText 3s ease-in-out infinite;
+        animation-delay: var(--random-delay);
+        color: #ffffff; /* bright color */
+        text-shadow: 0 0 8px rgba(255, 255, 255, 0.9),
+          0 0 16px rgba(255, 255, 255, 0.7), 0 0 24px rgba(255, 255, 255, 0.5);
+      }
+
+      /* .star-unit.animate::before {
         content: '✦';
         position: absolute;
         top: -8px;
@@ -321,10 +329,10 @@
         font-size: 0.5em;
         opacity: 0;
         animation: starGlow 4s ease-in-out infinite;
-        animation-delay: calc(var(--char-index) * 0.15s);
-      }
+        animation-delay: 0.39s;
+      } */
 
-      .star-char::after {
+      .star-unit.animate::after {
         content: '';
         position: absolute;
         top: 50%;
@@ -337,40 +345,73 @@
         box-shadow: 0 0 4px rgba(255, 255, 255, 0.9),
           0 0 8px rgba(255, 255, 255, 0.6), 0 0 12px rgba(255, 255, 255, 0.3);
         animation: starPulse 2.5s ease-in-out infinite;
-        animation-delay: calc(var(--char-index) * 0.1s);
+        animation-delay: 0.39s;
+      }
+
+      @keyframes scaleText {
+        0%,
+        100% {
+          opacity: 0.5;
+          transform: scale(0.95);
+        }
+        25% {
+          opacity: 0.7;
+          transform: scale(1.05);
+        }
+        50% {
+          opacity: 0.6;
+          transform: scale(1);
+        }
+        75% {
+          opacity: 0.7;
+          transform: scale(1.025);
+        }
+      }
+
+      @keyframes twinkleDim {
+        0%,
+        100% {
+          text-shadow: 0 0 6px rgba(255, 255, 255, 0.5),
+            0 0 12px rgba(255, 255, 255, 0.3), 0 0 18px rgba(255, 255, 255, 0.2);
+        }
+        25% {
+          text-shadow: 0 0 9px rgba(255, 255, 255, 0.7),
+            0 0 18px rgba(255, 255, 255, 0.5), 0 0 27px rgba(255, 255, 255, 0.4);
+        }
+        50% {
+          text-shadow: 0 0 7px rgba(255, 255, 255, 0.6),
+            0 0 14px rgba(255, 255, 255, 0.4), 0 0 21px rgba(255, 255, 255, 0.3);
+        }
+        75% {
+          text-shadow: 0 0 10px rgba(255, 255, 255, 0.65),
+            0 0 21px rgba(255, 255, 255, 0.55),
+            0 0 30px rgba(255, 255, 255, 0.45);
+        }
       }
 
       /* Enhanced twinkling animations */
-      @keyframes starTwinkle {
+      @keyframes twinkleBright {
         0%,
         100% {
-          opacity: 0.7;
-          transform: scale(0.9);
           text-shadow: 0 0 8px rgba(255, 255, 255, 0.7),
             0 0 16px rgba(255, 255, 255, 0.5), 0 0 24px rgba(255, 255, 255, 0.3);
         }
         25% {
-          opacity: 1;
-          transform: scale(1.1);
           text-shadow: 0 0 12px rgba(255, 255, 255, 1),
             0 0 24px rgba(255, 255, 255, 0.8), 0 0 36px rgba(255, 255, 255, 0.6);
         }
         50% {
-          opacity: 0.8;
-          transform: scale(1);
           text-shadow: 0 0 10px rgba(255, 255, 255, 0.9),
             0 0 20px rgba(255, 255, 255, 0.7), 0 0 30px rgba(255, 255, 255, 0.5);
         }
         75% {
-          opacity: 0.9;
-          transform: scale(1.05);
           text-shadow: 0 0 14px rgba(255, 255, 255, 0.95),
             0 0 28px rgba(255, 255, 255, 0.75),
             0 0 42px rgba(255, 255, 255, 0.55);
         }
       }
 
-      @keyframes charGlow {
+      @keyframes unitGlow {
         0%,
         100% {
           opacity: 0.8;
@@ -409,19 +450,6 @@
           opacity: 1;
           transform: translate(-50%, -50%) scale(1.6);
         }
-      }
-
-      /* Different animation speeds for variety */
-      .star-char:nth-child(3n) {
-        animation-duration: 4s;
-      }
-
-      .star-char:nth-child(5n) {
-        animation-duration: 2.5s;
-      }
-
-      .star-char:nth-child(7n) {
-        animation-duration: 3.5s;
       }
 
       /* Rain Effect */

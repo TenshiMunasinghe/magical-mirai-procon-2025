@@ -30,7 +30,7 @@ const animateWord = function (now: number, unit: IRenderingUnit) {
   );
   console.log(`isPhraseRendered: ${isPhraseRendered}`);
 
-  // TODO: fucking refactor thi
+  // TODO: fucking refactor this
   if (!isPhraseRendered) {
     const hasIntervalPassed = !lastAddedPhrase
       ? false
@@ -50,15 +50,8 @@ const animateWord = function (now: number, unit: IRenderingUnit) {
       const fragment = document.createDocumentFragment();
 
       // Create a single unit container for the text
-      const unitContainer = document.createElement('span');
-      unitContainer.className = 'star-unit';
-      unitContainer.style.setProperty('--unit-index', startIndex.toString());
-
-      // Vertical scatter within a more compact range, avoiding control panel
-      const y = Math.random() * 5;
-      const negative = Math.random() > 0.5 ? -1 : 1;
-
-      unitContainer.style.marginTop = `${negative * y}rem`;
+      const phraseContainer = document.createElement('span');
+      phraseContainer.className = 'star-phrase';
 
       // Add individual characters to the unit container
       phrase.children.forEach((unit, index) => {
@@ -74,13 +67,22 @@ const animateWord = function (now: number, unit: IRenderingUnit) {
           : unit.toString();
 
         const span = document.createElement('span');
-        span.className = 'star-char';
-        span.style.setProperty('--char-index', (startIndex + index).toString());
+        span.className = 'star-unit';
+        span.setAttribute('data-unit-index', (startIndex + index).toString());
+        // Add random delay between 0 and 1 second
+        span.style.setProperty(
+          '--i',
+          Math.floor(Math.random() * 10).toString()
+        );
         span.textContent = textContent;
-        unitContainer.appendChild(span);
+        // Vertical scatter within a more compact range, avoiding control panel
+        const y = Math.random() * 5;
+        const negative = Math.random() > 0.5 ? -1 : 1;
+        span.style.marginTop = `${negative * y}rem`;
+        phraseContainer.appendChild(span);
       });
 
-      fragment.appendChild(unitContainer);
+      fragment.appendChild(phraseContainer);
       return fragment;
     };
 
@@ -98,6 +100,15 @@ const animateWord = function (now: number, unit: IRenderingUnit) {
     }
     lastAddedPhrase = phrase;
   }
+
+  const unitIdx =
+    lastAddedPhrase?.children.findIndex((unit) => unit.contains(now)) ?? 0;
+
+  const currentElement = document.querySelector<HTMLElement>(
+    `.star-unit[data-unit-index="${unitIdx}"]`
+  );
+
+  currentElement?.classList.add('animate');
 };
 
 // TextAlive Player を作る
