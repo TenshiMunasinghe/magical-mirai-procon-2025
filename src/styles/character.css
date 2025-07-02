@@ -1,0 +1,76 @@
+/* Walking Character */
+.walking-character {
+  --character-img1: url('../assets/miku1.png');
+  --character-img2: url('../assets/miku2.png');
+  position: fixed;
+  bottom: 10%; /* Position on the street level */
+  left: 15%; /* Keep character in one place on screen */
+  width: 250px;
+  height: 390px;
+  background-image: var(--character-img1);
+
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom center;
+  z-index: 5;
+  animation: walkingFrames 1.026s steps(1) infinite,
+    bounce 0.513s ease-in-out infinite;
+  will-change: transform, background-image;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+@keyframes walkingFrames {
+  0%,
+  49% {
+    background-image: var(--character-img1);
+  }
+  50%,
+  100% {
+    background-image: var(--character-img2);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Hop animation for space key */
+.walking-character.hopping {
+  animation: walkingFrames 1.026s steps(1) infinite,
+    hop 1.026s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* More satisfying easing */
+}
+
+@keyframes hop {
+  0% {
+    transform: translateY(0px);
+  }
+
+  35% {
+    transform: translateY(-39px); /* Higher jump with stretch */
+  }
+  39% {
+    transform: translateY(-39px); /* Hang time at peak */
+  }
+  70% {
+    transform: translateY(-8px); /* Slower descent start */
+  }
+  100% {
+    transform: translateY(0px); /* Settle */
+  }
+}
+
+/* Animation control for walking character */
+.paused .walking-character {
+  animation-play-state: paused;
+}
+
+.playing .walking-character {
+  animation-play-state: running;
+}

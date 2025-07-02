@@ -1,0 +1,88 @@
+/* Lyrics Text Display - Scattered like stars */
+#text {
+  position: fixed;
+  width: 75%;
+  height: 22rem; /* Upper portion of screen for sky */
+  font-size: 39px;
+  font-weight: 300;
+  text-align: center;
+  min-height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: transparent;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  overflow: visible;
+  backdrop-filter: none;
+  padding: 0;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.star-phrase {
+  display: flex;
+  transform-origin: center;
+  white-space: nowrap;
+  gap: 0.25rem;
+}
+
+.star-unit {
+  margin: 0 1px;
+  padding: 0;
+  transform-origin: center;
+  letter-spacing: normal;
+  white-space: nowrap;
+  color: #6c6c6c; /* dim color */
+  --random-delay: calc(var(--i, 0) * 0.1s);
+}
+
+.star-unit.animate {
+  animation-delay: var(--random-delay);
+  color: #ffffff; /* bright color */
+  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9),
+    0 0 16px rgba(255, 255, 255, 0.7), 0 0 24px rgba(255, 255, 255, 0.5);
+}
+
+/* .star-unit.animate::before {
+        content: '✦';
+        position: absolute;
+        top: -8px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 0.5em;
+        opacity: 0;
+        animation: starGlow 4s ease-in-out infinite;
+        animation-delay: 0.39s;
+      } */
+
+.star-unit.animate::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  background: radial-gradient(circle, #ffffff 0%, transparent 50%);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 0 4px rgba(255, 255, 255, 0.9), 0 0 8px rgba(255, 255, 255, 0.6),
+    0 0 12px rgba(255, 255, 255, 0.3);
+  animation: starPulse 2.5s ease-in-out infinite;
+  animation-delay: 0.39s;
+}
+
+@keyframes starPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.6);
+  }
+}

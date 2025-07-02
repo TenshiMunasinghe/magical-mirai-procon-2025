@@ -1,5 +1,11 @@
 type Character = 'miku' | 'rin' | 'luka';
 
+const characterColors: Record<Character, string> = {
+  miku: '#86E9EE',
+  rin: '#FFCD5B',
+  luka: '#E68FC4',
+};
+
 let character: Character = 'miku';
 
 const characterElement = document.querySelector(
@@ -11,11 +17,15 @@ const changeCharacter = (newCharacter: Character) => {
   character = newCharacter;
   characterElement.style.setProperty(
     '--character-img1',
-    `url('./src/assets/${character}1.png')`
+    `url('../assets/${character}1.png')`
   );
   characterElement.style.setProperty(
     '--character-img2',
-    `url('./src/assets/${character}2.png')`
+    `url('../assets/${character}2.png')`
+  );
+  characterElement.style.setProperty(
+    '--character-color',
+    characterColors[character]
   );
 };
 
