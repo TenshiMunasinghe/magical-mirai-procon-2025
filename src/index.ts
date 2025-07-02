@@ -1,115 +1,7 @@
-const MAX_TEXT_LENGTH = 20;
-const TEXT_UPDATE_INTERVAL = 1000;
 const TEXT_CLEAR_INTERVAL = 3900;
 
-import { IPlayerApp, Player, IRenderingUnit, Timer } from 'textalive-app-api';
-
-const el = document.querySelector('#text');
-
-// 単語が発声されていたら #text に表示する
-// Show words being vocalized in #text
-let lastAddedPhrase: IRenderingUnit | null = null;
-let unitCount = 0;
-
-const animateWord = function (now: number, unit: IRenderingUnit) {
-  if (!unit.contains(now)) return;
-  if (!el) return;
-
-  const phrase = unit.parent;
-  const text = phrase.toString();
-
-  // Debug duplicate detection
-  const isPhraseRendered =
-    lastAddedPhrase &&
-    lastAddedPhrase.startTime === phrase.startTime &&
-    lastAddedPhrase.toString() === text;
-
-  console.log(`=== Processing "${text}" ===`);
-  console.log(
-    `StartTime: ${unit.startTime}, LastWordStartTime: ${lastAddedPhrase?.startTime}`
-  );
-  console.log(`isPhraseRendered: ${isPhraseRendered}`);
-
-  // TODO: fucking refactor this
-  if (!isPhraseRendered) {
-    const hasIntervalPassed = !lastAddedPhrase
-      ? false
-      : now - lastAddedPhrase.endTime > TEXT_UPDATE_INTERVAL;
-    const isOverMaxTextLength =
-      (el.textContent?.length ?? 0) + text.length > MAX_TEXT_LENGTH;
-
-    console.log(
-      `HasIntervalPassed: ${hasIntervalPassed}, IsOverMaxLength: ${isOverMaxTextLength}`
-    );
-
-    // Create scattered star elements across the sky
-    const createScatteredStarElements = (
-      phrase: IRenderingUnit,
-      startIndex: number = 0
-    ) => {
-      const fragment = document.createDocumentFragment();
-
-      // Create a single unit container for the text
-      const phraseContainer = document.createElement('span');
-      phraseContainer.className = 'star-phrase';
-
-      // Add individual characters to the unit container
-      phrase.children.forEach((unit, index) => {
-        const lastChar = unit.toString()[unit.toString().length - 1];
-
-        const isAlphabet = (char: string) => {
-          return /^[a-zA-Z]$/.test(char);
-        };
-
-        // 英単語の間にはスペースを入れる
-        const textContent = isAlphabet(lastChar)
-          ? unit.toString() + ' '
-          : unit.toString();
-
-        const span = document.createElement('span');
-        span.className = 'star-unit';
-        span.setAttribute('data-unit-index', (startIndex + index).toString());
-        // Add random delay between 0 and 1 second
-        span.style.setProperty(
-          '--i',
-          Math.floor(Math.random() * 10).toString()
-        );
-        span.textContent = textContent;
-        // Vertical scatter within a more compact range, avoiding control panel
-        const y = Math.random() * 5;
-        const negative = Math.random() > 0.5 ? -1 : 1;
-        span.style.marginTop = `${negative * y}rem`;
-        phraseContainer.appendChild(span);
-      });
-
-      fragment.appendChild(phraseContainer);
-      return fragment;
-    };
-
-    if (isOverMaxTextLength) {
-      // Only clear when we exceed max text length
-      console.log('CLEARING - Over max length');
-      el.innerHTML = ''; // Clear existing content including positioned elements
-      el.appendChild(createScatteredStarElements(phrase, 0)); // Start from 0 when clearing
-      unitCount = 1;
-    } else {
-      // Always append new words (don't clear on time intervals)
-      console.log('APPENDING - Normal flow');
-      el.appendChild(createScatteredStarElements(phrase, unitCount));
-      unitCount += 1;
-    }
-    lastAddedPhrase = phrase;
-  }
-
-  const unitIdx =
-    lastAddedPhrase?.children.findIndex((unit) => unit.contains(now)) ?? 0;
-
-  const currentElement = document.querySelector<HTMLElement>(
-    `.star-unit[data-unit-index="${unitIdx}"]`
-  );
-
-  currentElement?.classList.add('animate');
-};
+import { IPlayerApp, Player, Timer } from 'textalive-app-api';
+import { animateWord, lyricState } from './lyric';
 
 // TextAlive Player を作る
 // Instantiate a TextAlive Player instance
@@ -301,8 +193,7 @@ function onThrottledTimeUpdate(position: number) {
     }
 
     // Reset state when auto-clearing
-    lastAddedPhrase = null;
-    unitCount = 0;
+    lyricState.reset();
     console.log('STATE RESET - Auto clear triggered');
   }
 }
