@@ -3,6 +3,7 @@ const TEXT_CLEAR_INTERVAL = 3900;
 import { IPlayerApp, IRenderingUnit, Player, Timer } from 'textalive-app-api';
 import { animateLyric, lyricState } from './lyric';
 import { endingStartTime, handleEnding } from './ending';
+import { setupInteractions } from './overlay';
 
 export let globalNow = 0;
 
@@ -155,6 +156,7 @@ function onTimerReady(t: Timer) {
   if (!player.app.managed) {
     const buttons = document.querySelectorAll('button');
     buttons.forEach((btn) => (btn.disabled = false));
+    setupInteractions(player);
   }
 
   // 歌詞がなければ歌詞頭出しボタンを無効にする
@@ -212,7 +214,7 @@ function onThrottledTimeUpdate(position: number) {
 
 // 再生が始まったら #overlay を非表示に
 // Hide #overlay when music playbook started
-function onPlay() {
+export function onPlay() {
   const overlay = document.querySelector<HTMLElement>('#overlay');
   if (overlay) {
     overlay.style.display = 'none';

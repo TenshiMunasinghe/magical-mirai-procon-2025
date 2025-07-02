@@ -1,8 +1,8 @@
 import { characterState } from './character';
 
-export const endingStartTime = 2000;
-export const endingBufferTime = 1000;
-export const stopAnimationTIme = endingStartTime + 2000;
+export const endingStartTime = 181000;
+export const endingBufferTime = 3000;
+export const stopAnimationTIme = endingStartTime + 4000;
 
 // Track if ending has already started to prevent multiple executions
 let endingStarted = false;
@@ -43,8 +43,9 @@ const createEndingCharacter = (character: string, index: number) => {
     `url('../assets/${character}2.png')`
   );
 
-  // Position characters - first character goes furthest (leftmost)
-  const rightPosition = 39 - index * 9; // 65%, 40%, 15% from right
+  // Position 4 ending characters evenly across screen
+  // First character goes furthest (leftmost), then spread across
+  const rightPosition = 39 - index * 9; // 70%, 55%, 40%, 25% from right
   characterElement.style.setProperty('--end-position', `${rightPosition}%`);
 
   // Stagger the animation timing

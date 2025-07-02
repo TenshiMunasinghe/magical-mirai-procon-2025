@@ -61,15 +61,6 @@
     endingBounce 0.513s ease-in-out infinite;
 }
 
-/* Ensure ending characters appear with proper delay */
-.ending-character:nth-child(1) {
-  animation-delay: 0s;
-}
-
-.ending-character:nth-child(2) {
-  animation-delay: 0.8s;
-}
-
 @keyframes walkingFrames {
   0%,
   49% {
