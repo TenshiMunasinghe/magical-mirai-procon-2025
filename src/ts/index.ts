@@ -32,6 +32,7 @@ const playBtns = document.querySelectorAll('.play');
 const jumpBtn = document.querySelector<HTMLButtonElement>('#jump');
 const pauseBtn = document.querySelector<HTMLButtonElement>('#pause');
 const rewindBtn = document.querySelector<HTMLButtonElement>('#rewind');
+const reloadBtn = document.querySelector<HTMLButtonElement>('#reload');
 const positionEl = document.querySelector<HTMLSpanElement>('#position strong');
 
 const artistSpan = document.querySelector<HTMLSpanElement>('#artist span');
@@ -77,6 +78,11 @@ function onAppReady(app: IPlayerApp) {
       'click',
       () => player.video && player.requestMediaSeek(0)
     );
+
+    // リロードボタン / Reload page
+    reloadBtn?.addEventListener('click', () => {
+      location.reload();
+    });
 
     document
       .querySelector<HTMLAnchorElement>('#header a')
