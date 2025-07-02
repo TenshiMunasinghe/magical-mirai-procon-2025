@@ -282,3 +282,5 @@ const pauseCityAnimations = function () {
   document.body.classList.remove('playing');
   document.body.classList.add('paused');
 };
+
+// move all the eventlisteners to the overlay and make the functions pure
