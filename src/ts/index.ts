@@ -1,7 +1,10 @@
 const TEXT_CLEAR_INTERVAL = 3900;
 
-import { IPlayerApp, Player, Timer } from 'textalive-app-api';
-import { animateWord, lyricState } from './lyric';
+import { IPlayerApp, IRenderingUnit, Player, Timer } from 'textalive-app-api';
+import { animateLyric, lyricState } from './lyric';
+import { endingStartTime, handleEnding } from './ending';
+
+export let globalNow = 0;
 
 // TextAlive Player を作る
 // Instantiate a TextAlive Player instance
@@ -109,6 +112,15 @@ function onAppReady(app: IPlayerApp) {
   }
 }
 
+function animate(now: number, unit: IRenderingUnit) {
+  globalNow = now;
+  console.log(globalNow);
+  animateLyric(now, unit);
+  if (now > endingStartTime) {
+    handleEnding(now);
+  }
+}
+
 /**
  * 動画オブジェクトの準備が整ったとき（楽曲に関する情報を読み込み終わったとき）に呼ばれる
  *
@@ -127,7 +139,7 @@ function onVideoReady() {
   // Set "animate" function
   let w = player.video.firstWord;
   while (w) {
-    w.animate = animateWord;
+    w.animate = animate;
     w = w.next;
   }
 }
@@ -169,8 +181,8 @@ function onThrottledTimeUpdate(position: number) {
     Math.max(position - TEXT_CLEAR_INTERVAL, 0),
     position
   );
-  console.log(charsWithinInterval.current);
-  console.log(charsWithinInterval.entered);
+  // console.log(charsWithinInterval.current);
+  // console.log(charsWithinInterval.entered);
   const hasClearIntervalPassed =
     charsWithinInterval.current === null &&
     charsWithinInterval.entered.length === 0;

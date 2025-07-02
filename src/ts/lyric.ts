@@ -1,4 +1,5 @@
 import { IRenderingUnit } from 'textalive-app-api';
+import { characterState } from './character';
 
 // Shared state for lyrics functionality
 export const lyricState = {
@@ -24,7 +25,7 @@ export const lyricState = {
   },
 };
 
-const MAX_TEXT_LENGTH = 20;
+// const MAX_TEXT_LENGTH = 20;
 const TEXT_UPDATE_INTERVAL = 1000;
 
 const el = document.querySelector('#text');
@@ -70,9 +71,11 @@ const createScatteredStarElements = (
   return fragment;
 };
 
-export const animateWord = function (now: number, unit: IRenderingUnit) {
+export const animateLyric = function (now: number, unit: IRenderingUnit) {
   if (!unit.contains(now)) return;
   if (!el) return;
+
+  console.log(now);
 
   const phrase = unit.parent;
   const text = phrase.toString();
@@ -83,11 +86,11 @@ export const animateWord = function (now: number, unit: IRenderingUnit) {
     lyricState.lastAddedPhrase.startTime === phrase.startTime &&
     lyricState.lastAddedPhrase.toString() === text;
 
-  console.log(`=== Processing "${text}" ===`);
-  console.log(
-    `StartTime: ${unit.startTime}, LastWordStartTime: ${lyricState.lastAddedPhrase?.startTime}`
-  );
-  console.log(`isPhraseRendered: ${isPhraseRendered}`);
+  // console.log(`=== Processing "${text}" ===`);
+  // console.log(
+  //   `StartTime: ${unit.startTime}, LastWordStartTime: ${lyricState.lastAddedPhrase?.startTime}`
+  // );
+  // console.log(`isPhraseRendered: ${isPhraseRendered}`);
 
   // TODO: fucking refactor this <- UPDATE: Done? ig?
   const hasIntervalPassed = !lyricState.lastAddedPhrase
@@ -108,5 +111,13 @@ export const animateWord = function (now: number, unit: IRenderingUnit) {
     `.star-unit[data-unit-index="${unitIdx}"]`
   );
 
+  if (currentElement?.classList.contains('animate')) {
+    return;
+  }
+
+  currentElement?.style.setProperty(
+    '--text-color',
+    characterState.characterColors[characterState.currentCharacter]
+  );
   currentElement?.classList.add('animate');
 };

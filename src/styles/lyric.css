@@ -12,7 +12,7 @@
   justify-content: center;
   gap: 0.5rem;
   background: transparent;
-  color: #ffffff;
+  color: #ffffff; /* default color */
   border: none;
   border-radius: 0;
   box-shadow: none;
@@ -42,9 +42,9 @@
 
 .star-unit.animate {
   animation-delay: var(--random-delay);
-  color: #ffffff; /* bright color */
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.9),
-    0 0 16px rgba(255, 255, 255, 0.7), 0 0 24px rgba(255, 255, 255, 0.5);
+  color: var(--text-color); /* bright color */
+  text-shadow: 0 0 8px var(--text-color), 0 0 16px var(--text-color),
+    0 0 24px var(--text-color);
 }
 
 /* .star-unit.animate::before {

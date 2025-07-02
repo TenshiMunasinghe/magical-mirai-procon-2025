@@ -1,4 +1,9 @@
-type Character = 'miku' | 'rin' | 'luka';
+import { globalNow } from '.';
+import { endingBufferTime, endingStartTime } from './ending';
+
+const characters = ['miku', 'rin', 'luka'] as const;
+
+export type Character = (typeof characters)[number];
 
 const characterColors: Record<Character, string> = {
   miku: '#86E9EE',
@@ -6,15 +11,14 @@ const characterColors: Record<Character, string> = {
   luka: '#E68FC4',
 };
 
-let character: Character = 'miku';
+const changeCharacter = (
+  newCharacter: Character,
+  characterElement: HTMLElement
+) => {
+  if (globalNow > endingStartTime - endingBufferTime) return;
 
-const characterElement = document.querySelector(
-  '.walking-character'
-) as HTMLElement;
-let isHopping = false;
-
-const changeCharacter = (newCharacter: Character) => {
-  character = newCharacter;
+  characterState.currentCharacter = newCharacter;
+  const character = characterState.currentCharacter;
   characterElement.style.setProperty(
     '--character-img1',
     `url('../assets/${character}1.png')`
@@ -23,34 +27,53 @@ const changeCharacter = (newCharacter: Character) => {
     '--character-img2',
     `url('../assets/${character}2.png')`
   );
-  characterElement.style.setProperty(
-    '--character-color',
-    characterColors[character]
-  );
 };
 
 document.addEventListener('keydown', (event) => {
   // Check if space key is pressed and character is not already hopping
-  if (event.code === 'Space' && !isHopping && characterElement) {
+  if (
+    event.code === 'Space' &&
+    !characterState.isHopping &&
+    characterState.characterElement
+  ) {
     event.preventDefault(); // Prevent page scroll
 
-    isHopping = true;
-    characterElement.classList.add('hopping');
+    characterState.isHopping = true;
+    characterState.characterElement.classList.add('hopping');
 
     // Remove hopping class after animation completes (1.026s = 2 beats at 117 BPM)
     setTimeout(() => {
-      characterElement.classList.remove('hopping');
-      isHopping = false;
+      characterState.characterElement.classList.remove('hopping');
+      characterState.isHopping = false;
     }, 1026); // 1.026 seconds in milliseconds
   }
 });
 
 document.addEventListener('keydown', (event) => {
   if (event.code === 'Digit1') {
-    changeCharacter('miku');
+    changeCharacter('miku', characterState.characterElement);
   } else if (event.code === 'Digit2') {
-    changeCharacter('rin');
+    changeCharacter('rin', characterState.characterElement);
   } else if (event.code === 'Digit3') {
-    changeCharacter('luka');
+    changeCharacter('luka', characterState.characterElement);
   }
 });
+
+export const characterState: {
+  currentCharacter: Character;
+  allCharacters: readonly Character[];
+  changeCharacter: (
+    newCharacter: Character,
+    characterElement: HTMLElement
+  ) => void;
+  characterElement: HTMLElement;
+  isHopping: boolean;
+  characterColors: Record<Character, string>;
+} = {
+  currentCharacter: 'miku',
+  allCharacters: characters,
+  changeCharacter,
+  characterElement: document.querySelector('.walking-character') as HTMLElement,
+  isHopping: false,
+  characterColors,
+};
