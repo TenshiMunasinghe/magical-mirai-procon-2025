@@ -1,34 +1,17 @@
 import { IRenderingUnit } from 'textalive-app-api';
-import { characterState } from './character';
-
-// Shared state for lyrics functionality
-export const lyricState = {
-  lastAddedPhrase: null as IRenderingUnit | null,
-  unitCount: 0,
-
-  // Helper methods
-  reset() {
-    this.lastAddedPhrase = null;
-    this.unitCount = 0;
-  },
-
-  setLastAddedPhrase(phrase: IRenderingUnit | null) {
-    this.lastAddedPhrase = phrase;
-  },
-
-  incrementUnitCount() {
-    this.unitCount++;
-  },
-
-  setUnitCount(count: number) {
-    this.unitCount = count;
-  },
-};
+import { Character, currentCharacter } from './character';
 
 // const MAX_TEXT_LENGTH = 20;
 const TEXT_UPDATE_INTERVAL = 1000;
+export const CHARACTER_COLORS: Record<Character, string> = {
+  miku: '#86E9EE',
+  rin: '#FFCD5B',
+  luka: '#E68FC4',
+};
 
 const el = document.querySelector('#text');
+
+let lastAddedPhrase: IRenderingUnit | null = null;
 
 // Create scattered star elements across the sky
 const createScatteredStarElements = (
@@ -82,9 +65,9 @@ export const animateLyric = function (now: number, unit: IRenderingUnit) {
 
   // Debug duplicate detection
   const isPhraseRendered =
-    lyricState.lastAddedPhrase &&
-    lyricState.lastAddedPhrase.startTime === phrase.startTime &&
-    lyricState.lastAddedPhrase.toString() === text;
+    lastAddedPhrase &&
+    lastAddedPhrase.startTime === phrase.startTime &&
+    lastAddedPhrase.toString() === text;
 
   // console.log(`=== Processing "${text}" ===`);
   // console.log(
@@ -93,19 +76,17 @@ export const animateLyric = function (now: number, unit: IRenderingUnit) {
   // console.log(`isPhraseRendered: ${isPhraseRendered}`);
 
   // TODO: fucking refactor this <- UPDATE: Done? ig?
-  const hasIntervalPassed = !lyricState.lastAddedPhrase
+  const hasIntervalPassed = !lastAddedPhrase
     ? false
-    : now - lyricState.lastAddedPhrase.endTime > TEXT_UPDATE_INTERVAL;
+    : now - lastAddedPhrase.endTime > TEXT_UPDATE_INTERVAL;
 
   if (!isPhraseRendered || hasIntervalPassed) {
     el.innerHTML = ''; // Clear existing content including positioned elements
     el.appendChild(createScatteredStarElements(phrase, 0)); // Start from 0 when clearing
-    lyricState.setLastAddedPhrase(phrase);
+    lastAddedPhrase = phrase;
   }
   const unitIdx =
-    lyricState.lastAddedPhrase?.children.findIndex((unit) =>
-      unit.contains(now)
-    ) ?? 0;
+    lastAddedPhrase?.children.findIndex((unit) => unit.contains(now)) ?? 0;
 
   const currentElement = document.querySelector<HTMLElement>(
     `.star-unit[data-unit-index="${unitIdx}"]`
@@ -117,7 +98,11 @@ export const animateLyric = function (now: number, unit: IRenderingUnit) {
 
   currentElement?.style.setProperty(
     '--text-color',
-    characterState.characterColors[characterState.currentCharacter]
+    CHARACTER_COLORS[currentCharacter]
   );
   currentElement?.classList.add('animate');
+};
+
+export const resetLastAddedPhrase = () => {
+  lastAddedPhrase = null;
 };

@@ -1,9 +1,11 @@
 const TEXT_CLEAR_INTERVAL = 3900;
 
 import { IPlayerApp, IRenderingUnit, Player, Timer } from 'textalive-app-api';
-import { animateLyric, lyricState } from './lyric';
-import { endingStartTime, handleEnding } from './ending';
+import { animateLyric, resetLastAddedPhrase } from './lyric';
+import { ENDING_START_TIME, handleEnding } from './ending';
 import { setupInteractions } from './overlay';
+import { playCityAnimations, pauseCityAnimations } from './background';
+import { initializeControls } from './controls';
 
 export let globalNow = 0;
 
@@ -28,16 +30,6 @@ player.addListener({
   onStop,
 });
 
-const playBtns = document.querySelectorAll('.play');
-const jumpBtn = document.querySelector<HTMLButtonElement>('#jump');
-const pauseBtn = document.querySelector<HTMLButtonElement>('#pause');
-const rewindBtn = document.querySelector<HTMLButtonElement>('#rewind');
-const reloadBtn = document.querySelector<HTMLButtonElement>('#reload');
-const positionEl = document.querySelector<HTMLSpanElement>('#position strong');
-
-const artistSpan = document.querySelector<HTMLSpanElement>('#artist span');
-const songSpan = document.querySelector<HTMLSpanElement>('#song span');
-
 /**
  * TextAlive App が初期化されたときに呼ばれる
  *
@@ -47,42 +39,7 @@ function onAppReady(app: IPlayerApp) {
   // TextAlive ホストと接続されていなければ再生コントロールを表示する
   // Show control if this app is launched standalone (not connected to a TextAlive host)
   if (!app.managed) {
-    const control = document.querySelector<HTMLDivElement>('#control');
-    if (control) {
-      control.style.display = 'block';
-    }
-
-    // 再生ボタン / Start music playback
-    playBtns.forEach((playBtn) =>
-      playBtn.addEventListener('click', () => {
-        player.video && player.requestPlay();
-      })
-    );
-
-    // 歌詞頭出しボタン / Seek to the first character in lyrics text
-    jumpBtn?.addEventListener(
-      'click',
-      () =>
-        player.video &&
-        player.requestMediaSeek(player.video.firstChar.startTime)
-    );
-
-    // 一時停止ボタン / Pause music playback
-    pauseBtn?.addEventListener(
-      'click',
-      () => player.video && player.requestPause()
-    );
-
-    // 巻き戻しボタン / Rewind music playback
-    rewindBtn?.addEventListener(
-      'click',
-      () => player.video && player.requestMediaSeek(0)
-    );
-
-    // リロードボタン / Reload page
-    reloadBtn?.addEventListener('click', () => {
-      location.reload();
-    });
+    initializeControls(player);
 
     document
       .querySelector<HTMLAnchorElement>('#header a')
@@ -121,9 +78,9 @@ function onAppReady(app: IPlayerApp) {
 
 function animate(now: number, unit: IRenderingUnit) {
   globalNow = now;
-  console.log(globalNow);
+
   animateLyric(now, unit);
-  if (now > endingStartTime) {
+  if (now > ENDING_START_TIME) {
     handleEnding(now);
   }
 }
@@ -133,15 +90,6 @@ function animate(now: number, unit: IRenderingUnit) {
  *
 //  */
 function onVideoReady() {
-  // メタデータを表示する
-  // Show meta data
-  if (artistSpan) {
-    artistSpan.textContent = player.data.song.artist.name;
-  }
-  if (songSpan) {
-    songSpan.textContent = player.data.song.name;
-  }
-
   // 定期的に呼ばれる各単語の "animate" 関数をセットする
   // Set "animate" function
   let w = player.video.firstWord;
@@ -164,12 +112,6 @@ function onTimerReady(t: Timer) {
     buttons.forEach((btn) => (btn.disabled = false));
     setupInteractions(player);
   }
-
-  // 歌詞がなければ歌詞頭出しボタンを無効にする
-  // Disable jump button if no lyrics is available
-  if (jumpBtn) {
-    jumpBtn.disabled = !player.video.firstChar;
-  }
 }
 
 /**
@@ -178,12 +120,6 @@ function onTimerReady(t: Timer) {
  * @param {number} position - https://developer.textalive.jp/packages/textalive-app-api/interfaces/playereventlistener.html#onthrottledtimeupdate
  */
 function onThrottledTimeUpdate(position: number) {
-  // 再生位置を表示する
-  // Update current position
-  if (positionEl) {
-    positionEl.textContent = String(Math.floor(position));
-  }
-
   // 一定時間以上歌詞がない場合はリセット
   const charsWithinInterval = player.video.findCharChange(
     Math.max(position - TEXT_CLEAR_INTERVAL, 0),
@@ -213,7 +149,7 @@ function onThrottledTimeUpdate(position: number) {
     }
 
     // Reset state when auto-clearing
-    lyricState.reset();
+    resetLastAddedPhrase();
     console.log('STATE RESET - Auto clear triggered');
   }
 }
@@ -278,15 +214,3 @@ document.addEventListener('click', function (e) {
     style.remove();
   }, 1000);
 });
-
-const playCityAnimations = function () {
-  document.body.classList.remove('paused');
-  document.body.classList.add('playing');
-};
-
-const pauseCityAnimations = function () {
-  document.body.classList.remove('playing');
-  document.body.classList.add('paused');
-};
-
-// move all the eventlisteners to the overlay and make the functions pure

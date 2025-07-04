@@ -11,6 +11,11 @@ const initOverlay = () => {
   characterBoxes = document.querySelectorAll('.character-box');
 };
 
+// Initialize overlay when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  initOverlay();
+});
+
 export const setupInteractions = (player: Player) => {
   // Set up start button
   startButton.addEventListener('click', () => {
@@ -28,8 +33,3 @@ export const setupInteractions = (player: Player) => {
   startButton.textContent = '開始';
   startButton.disabled = false;
 };
-
-// Initialize overlay when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-  initOverlay();
-});
