@@ -34,6 +34,6 @@ export const setupInteractions = (player: Player) => {
     player.requestPlay();
   });
 
-  startButton.textContent = '開始';
+  startButton.textContent = 'スタート！';
   startButton.disabled = false;
 };
