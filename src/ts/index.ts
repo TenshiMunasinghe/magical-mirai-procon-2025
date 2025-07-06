@@ -1,11 +1,12 @@
 const TEXT_CLEAR_INTERVAL = 3900;
 
 import { IPlayerApp, IRenderingUnit, Player, Timer } from 'textalive-app-api';
-import { animateLyric, resetLastAddedPhrase } from './lyric';
+import { animateLyric, displayCredits, resetLastAddedPhrase } from './lyric';
 import { ENDING_START_TIME, handleEnding } from './ending';
 import { setupInteractions } from './overlay';
 import { playCityAnimations, pauseCityAnimations } from './background';
 import { initializeControls } from './controls';
+import { resetEnding } from './ending';
 
 export let globalNow = 0;
 
@@ -170,6 +171,9 @@ function onPause() {
 }
 
 function onStop() {
+  displayCredits(player);
+  resetLastAddedPhrase();
+  resetEnding();
   pauseCityAnimations();
 }
 

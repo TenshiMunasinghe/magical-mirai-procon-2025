@@ -1,4 +1,4 @@
-import { IRenderingUnit } from 'textalive-app-api';
+import { IRenderingUnit, Player } from 'textalive-app-api';
 import { Character, currentCharacter } from './character';
 
 // const MAX_TEXT_LENGTH = 20;
@@ -105,4 +105,24 @@ export const animateLyric = function (now: number, unit: IRenderingUnit) {
 
 export const resetLastAddedPhrase = () => {
   lastAddedPhrase = null;
+  if (el) el.innerHTML = '';
+};
+
+export const displayCredits = (player: Player) => {
+  if (!el) return;
+
+  const songName = player.data.song.name;
+  const artistName = player.data.song.artist.name;
+  const credits = {
+    songName,
+    artistName,
+  };
+
+  console.log(credits);
+
+  const creditsEl = document.createElement('span');
+  creditsEl.className = 'star-phrase';
+  creditsEl.textContent = `${credits.songName} - ${credits.artistName}`;
+
+  el.appendChild(creditsEl);
 };

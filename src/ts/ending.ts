@@ -39,3 +39,13 @@ const stopAnimation = () => {
     character.classList.add('stop-animation');
   });
 };
+
+export const resetEnding = () => {
+  endingStarted = false;
+  const endingCharacters = Array.from(
+    document.querySelectorAll('.ending-character')
+  );
+  endingCharacters.forEach((character) => {
+    character.remove();
+  });
+};
