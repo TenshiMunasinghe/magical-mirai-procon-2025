@@ -43,7 +43,7 @@
 
 /* Rain continues animating regardless of play/pause state */
 .rain {
-  animation-play-state: running !important;
+  animation-play-state: running;
 }
 
 .buildings-far {
