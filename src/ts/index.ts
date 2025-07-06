@@ -214,37 +214,12 @@ document.addEventListener('keydown', function (e) {
 document.addEventListener('click', function (e) {
   // Create ripple effect on click
   const ripple = document.createElement('div');
-  ripple.style.position = 'fixed';
+  ripple.className = 'ripple';
   ripple.style.left = e.clientX + 'px';
   ripple.style.top = e.clientY + 'px';
-  ripple.style.width = '10px';
-  ripple.style.height = '10px';
-  ripple.style.background = 'rgba(0, 188, 212, 0.6)';
-  ripple.style.borderRadius = '50%';
-  ripple.style.transform = 'translate(-50%, -50%)';
-  ripple.style.pointerEvents = 'none';
-  ripple.style.zIndex = '1000';
-  ripple.style.animation = 'rippleEffect 1s ease-out forwards';
   document.body.appendChild(ripple);
-
-  // Add ripple animation
-  const style = document.createElement('style');
-  style.textContent = `
-          @keyframes rippleEffect {
-            0% {
-              transform: translate(-50%, -50%) scale(0);
-              opacity: 1;
-            }
-            100% {
-              transform: translate(-50%, -50%) scale(20);
-              opacity: 0;
-            }
-          }
-        `;
-  document.head.appendChild(style);
 
   setTimeout(() => {
     ripple.remove();
-    style.remove();
   }, 1000);
 });
