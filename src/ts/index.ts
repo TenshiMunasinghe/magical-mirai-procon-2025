@@ -2,13 +2,20 @@ const TEXT_CLEAR_INTERVAL = 3900;
 
 import { IPlayerApp, IRenderingUnit, Player, Timer } from 'textalive-app-api';
 import { animateLyric, displayCredits, resetLastAddedPhrase } from './lyric';
-import { ENDING_START_TIME, handleEnding } from './ending';
+import {
+  ENDING_START_TIME,
+  handleEnding,
+  SONG_END_TIME,
+  STOP_ANIMATION_TIME,
+} from './ending';
 import { setupInteractions } from './overlay';
 import { playCityAnimations, pauseCityAnimations } from './background';
-import { initializeControls } from './controls';
+import { hidePauseBtn, hidePlayBtn, initializeControls } from './controls';
 import { resetEnding } from './ending';
+import { animateShootingStar, SHOOTING_STAR_START_TIME } from './shootingStar';
 
 export let globalNow = 0;
+export let hasCompleted = false;
 
 // TextAlive Player を作る
 // Instantiate a TextAlive Player instance
@@ -80,9 +87,24 @@ function onAppReady(app: IPlayerApp) {
 function animate(now: number, unit: IRenderingUnit) {
   globalNow = now;
 
-  animateLyric(now, unit);
   if (now > ENDING_START_TIME) {
     handleEnding(now);
+  }
+
+  if (now > SHOOTING_STAR_START_TIME) {
+    animateShootingStar(now);
+  }
+
+  if (now > STOP_ANIMATION_TIME && !hasCompleted) {
+    resetLastAddedPhrase();
+    resetEnding();
+    displayCredits(player);
+    pauseCityAnimations();
+    hidePlayBtn();
+    hidePauseBtn();
+    hasCompleted = true;
+  } else if (!hasCompleted) {
+    animateLyric(now, unit);
   }
 }
 
@@ -150,7 +172,7 @@ function onThrottledTimeUpdate(position: number) {
     }
 
     // Reset state when auto-clearing
-    resetLastAddedPhrase();
+    if (el?.querySelector('#credit') === null) resetLastAddedPhrase();
     console.log('STATE RESET - Auto clear triggered');
   }
 }
@@ -171,14 +193,22 @@ function onPause() {
 }
 
 function onStop() {
-  displayCredits(player);
-  resetLastAddedPhrase();
-  resetEnding();
-  pauseCityAnimations();
+  // this doesnt run??? gonna use animate()
 }
 
 // Set initial state to paused
 document.body.classList.add('paused');
+
+// Debug: Add keyboard shortcut to jump to 18000ms for testing shooting star
+document.addEventListener('keydown', function (e) {
+  if (e.key === 'j' || e.key === 'J') {
+    console.log('Debug: Jumping to 18000ms for shooting star testing');
+    if (player && player.video) {
+      player.requestMediaSeek(181000);
+      player.requestPlay();
+    }
+  }
+});
 
 // Add ambient city effects
 document.addEventListener('click', function (e) {

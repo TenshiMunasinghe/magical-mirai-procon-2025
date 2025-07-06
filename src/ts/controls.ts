@@ -1,4 +1,5 @@
 import { Player } from 'textalive-app-api';
+import { hasCompleted } from '.';
 
 const playBtns = document.querySelectorAll('.play');
 const pauseBtn = document.querySelector<HTMLButtonElement>('#pause');
@@ -13,6 +14,10 @@ export const initializeControls = (player: Player) => {
   // 再生ボタン / Start music playback
   playBtns.forEach((playBtn) =>
     playBtn.addEventListener('click', () => {
+      if (hasCompleted) {
+        location.reload();
+        return;
+      }
       player.video && player.requestPlay();
     })
   );
@@ -27,4 +32,12 @@ export const initializeControls = (player: Player) => {
   reloadBtn?.addEventListener('click', () => {
     location.reload();
   });
+};
+
+export const hidePlayBtn = () => {
+  playBtns.forEach((playBtn) => playBtn.setAttribute('style', 'display: none'));
+};
+
+export const hidePauseBtn = () => {
+  pauseBtn?.setAttribute('style', 'display: none');
 };

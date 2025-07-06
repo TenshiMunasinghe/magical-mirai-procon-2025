@@ -121,6 +121,7 @@ export const displayCredits = (player: Player) => {
   console.log(credits);
 
   const creditsEl = document.createElement('span');
+  creditsEl.id = 'credit';
   creditsEl.className = 'star-phrase';
   creditsEl.textContent = `${credits.songName} - ${credits.artistName}`;
 

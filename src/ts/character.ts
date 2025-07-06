@@ -1,5 +1,6 @@
 import { globalNow } from '.';
 import { ENDING_BUFFER_TIME, ENDING_START_TIME } from './ending';
+import { CHARACTER_COLORS } from './lyric';
 
 export const characters = ['miku', 'rin', 'luka'] as const;
 export type Character = (typeof characters)[number];
@@ -11,10 +12,7 @@ export const characterElement: HTMLElement = document.querySelector(
 export let currentCharacter: Character = 'miku';
 let isHopping: boolean = false;
 
-const changeCharacter = (
-  newCharacter: Character,
-  characterElement: HTMLElement
-) => {
+export const changeCharacter = (newCharacter: Character) => {
   if (globalNow > ENDING_START_TIME - ENDING_BUFFER_TIME) return;
 
   currentCharacter = newCharacter;
@@ -26,6 +24,10 @@ const changeCharacter = (
   characterElement.style.setProperty(
     '--character-img2',
     `url('../assets/${character}2.png')`
+  );
+  document.body.style.setProperty(
+    '--shooting-star-color',
+    CHARACTER_COLORS[character]
   );
 };
 
@@ -81,10 +83,10 @@ document.addEventListener('keydown', (event) => {
 
 document.addEventListener('keydown', (event) => {
   if (event.code === 'Digit1') {
-    changeCharacter('miku', characterElement);
+    changeCharacter('miku');
   } else if (event.code === 'Digit2') {
-    changeCharacter('rin', characterElement);
+    changeCharacter('rin');
   } else if (event.code === 'Digit3') {
-    changeCharacter('luka', characterElement);
+    changeCharacter('luka');
   }
 });

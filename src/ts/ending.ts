@@ -6,9 +6,9 @@ import {
 } from './character';
 
 export const ENDING_START_TIME = 181000;
+export const SONG_END_TIME = 197000;
 export const ENDING_BUFFER_TIME = 3000;
-export const STOP_ANIMATION_TIME = ENDING_START_TIME + 4000;
-
+export const STOP_ANIMATION_TIME = ENDING_START_TIME + 1.5 * ENDING_BUFFER_TIME;
 // Track if ending has already started to prevent multiple executions
 let endingStarted = false;
 
@@ -31,6 +31,7 @@ export const handleEnding = (now: number) => {
     createEndingCharacter(character, index);
   });
 };
+
 const stopAnimation = () => {
   const endingCharacters = Array.from(
     document.querySelectorAll('.ending-character')
