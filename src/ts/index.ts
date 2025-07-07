@@ -2,20 +2,19 @@ const TEXT_CLEAR_INTERVAL = 3900;
 
 import { IPlayerApp, IRenderingUnit, Player, Timer } from 'textalive-app-api';
 import { animateLyric, displayCredits, resetLastAddedPhrase } from './lyric';
-import {
-  ENDING_START_TIME,
-  handleEnding,
-  SONG_END_TIME,
-  STOP_ANIMATION_TIME,
-} from './ending';
+import { ENDING_START_TIME, handleEnding, STOP_ANIMATION_TIME } from './ending';
 import { setupInteractions } from './overlay';
 import { playCityAnimations, pauseCityAnimations } from './background';
 import { hidePauseBtn, hidePlayBtn, initializeControls } from './controls';
 import { resetEnding } from './ending';
 import { animateShootingStar, SHOOTING_STAR_START_TIME } from './shootingStar';
+import { isOverlayOpen } from './overlay';
 
 export let globalNow = 0;
 export let hasCompleted = false;
+
+let myTimer = 1;
+export const incrementTimer = () => myTimer++;
 
 // TextAlive Player を作る
 // Instantiate a TextAlive Player instance
@@ -86,6 +85,13 @@ function onAppReady(app: IPlayerApp) {
 
 function animate(now: number, unit: IRenderingUnit) {
   globalNow = now;
+
+  if (myTimer * 1000 < now) {
+    console.log('Problem at', myTimer, now);
+    player.requestMediaSeek(0);
+    player.requestPlay();
+    return;
+  }
 
   if (now > ENDING_START_TIME) {
     handleEnding(now);
@@ -200,9 +206,11 @@ document.body.classList.add('paused');
 
 // Debug: Add keyboard shortcut to jump to 18000ms for testing shooting star
 document.addEventListener('keydown', function (e) {
+  if (isOverlayOpen) return;
   if (e.key === 'j' || e.key === 'J') {
     console.log('Debug: Jumping to 18000ms for shooting star testing');
     if (player && player.video) {
+      myTimer = 182000;
       player.requestMediaSeek(181000);
       player.requestPlay();
     }

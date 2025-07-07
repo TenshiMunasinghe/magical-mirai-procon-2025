@@ -15,7 +15,15 @@
 body {
   font-family: 'receipt-font', sans-serif;
   overflow-x: hidden;
-  background: linear-gradient(to bottom, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+  /* Safari fallback - solid color first */
+  background-color: #0a0a1a;
+  /* Modern gradient for browsers that support it */
+  background-image: linear-gradient(
+    to bottom,
+    #0a0a1a 0%,
+    #1a1a2e 50%,
+    #16213e 100%
+  );
   min-height: 100vh;
   position: relative;
   color: white;
@@ -38,7 +46,10 @@ body {
   position: fixed;
   width: 10px;
   height: 10px;
-  background: var(--shooting-star-color);
+  background: var(
+    --shooting-star-color,
+    #86e9ee
+  ); /* Fallback color for Safari */
   border-radius: 50%;
   transform: translate(-50%, -50%);
   pointer-events: none;

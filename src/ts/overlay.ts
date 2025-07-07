@@ -1,11 +1,13 @@
 import { Player } from 'textalive-app-api';
 import { displayCredits } from './lyric';
 import { changeCharacter } from './character';
+import { incrementTimer } from '.';
 
 // Overlay state
 let overlay: HTMLElement;
 let startButton: HTMLButtonElement;
 let characterBoxes: NodeListOf<HTMLElement>;
+export let isOverlayOpen = true;
 
 const initOverlay = () => {
   overlay = document.getElementById('character-selection-overlay')!;
@@ -25,11 +27,16 @@ export const setupInteractions = (player: Player) => {
     overlay.style.opacity = '0';
     overlay.style.transition = 'opacity 0.5s ease-out';
     changeCharacter('miku');
+    isOverlayOpen = false;
 
     setTimeout(() => {
       overlay.classList.add('hidden');
       displayCredits(player);
     }, 500);
+
+    setInterval(() => {
+      incrementTimer();
+    }, 1000);
 
     player.requestPlay();
   });
