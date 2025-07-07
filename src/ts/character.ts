@@ -2,7 +2,14 @@ import { globalNow } from '.';
 import { ENDING_BUFFER_TIME, ENDING_START_TIME } from './ending';
 import { CHARACTER_COLORS } from './lyric';
 
-export const characters = ['miku', 'rin', 'luka'] as const;
+export const characters = [
+  'miku',
+  'rin',
+  'ren',
+  'luka',
+  'meiko',
+  'kaito',
+] as const;
 export type Character = (typeof characters)[number];
 
 export const characterElement: HTMLElement = document.querySelector(
@@ -87,6 +94,12 @@ document.addEventListener('keydown', (event) => {
   } else if (event.code === 'Digit2') {
     changeCharacter('rin');
   } else if (event.code === 'Digit3') {
+    changeCharacter('ren');
+  } else if (event.code === 'Digit4') {
     changeCharacter('luka');
+  } else if (event.code === 'Digit5') {
+    changeCharacter('meiko');
+  } else if (event.code === 'Digit6') {
+    changeCharacter('kaito');
   }
 });

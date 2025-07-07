@@ -6,7 +6,10 @@ const TEXT_UPDATE_INTERVAL = 1000;
 export const CHARACTER_COLORS: Record<Character, string> = {
   miku: '#86E9EE',
   rin: '#FFCD5B',
+  ren: '#EE963E',
   luka: '#E68FC4',
+  meiko: '#B43D30',
+  kaito: '#51679B',
 };
 
 const el = document.querySelector('#text');
