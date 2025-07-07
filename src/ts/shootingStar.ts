@@ -7,8 +7,6 @@ export const animateShootingStar = (now: number) => {
 
   if (now < SHOOTING_STAR_START_TIME) return;
 
-  console.log('Shooting star should appear now!', now);
-
   const elapsed = now - SHOOTING_STAR_START_TIME;
   const duration = 3000;
 

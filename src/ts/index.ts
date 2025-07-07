@@ -148,8 +148,7 @@ function onThrottledTimeUpdate(position: number) {
     Math.max(position - TEXT_CLEAR_INTERVAL, 0),
     position
   );
-  // console.log(charsWithinInterval.current);
-  // console.log(charsWithinInterval.entered);
+
   const hasClearIntervalPassed =
     charsWithinInterval.current === null &&
     charsWithinInterval.entered.length === 0;

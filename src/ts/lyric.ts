@@ -61,8 +61,6 @@ export const animateLyric = function (now: number, unit: IRenderingUnit) {
   if (!unit.contains(now)) return;
   if (!el) return;
 
-  console.log(now);
-
   const phrase = unit.parent;
   const text = phrase.toString();
 
@@ -71,12 +69,6 @@ export const animateLyric = function (now: number, unit: IRenderingUnit) {
     lastAddedPhrase &&
     lastAddedPhrase.startTime === phrase.startTime &&
     lastAddedPhrase.toString() === text;
-
-  // console.log(`=== Processing "${text}" ===`);
-  // console.log(
-  //   `StartTime: ${unit.startTime}, LastWordStartTime: ${lyricState.lastAddedPhrase?.startTime}`
-  // );
-  // console.log(`isPhraseRendered: ${isPhraseRendered}`);
 
   // TODO: fucking refactor this <- UPDATE: Done? ig?
   const hasIntervalPassed = !lastAddedPhrase
@@ -120,8 +112,6 @@ export const displayCredits = (player: Player) => {
     songName,
     artistName,
   };
-
-  console.log(credits);
 
   const creditsEl = document.createElement('span');
   creditsEl.id = 'credit';
