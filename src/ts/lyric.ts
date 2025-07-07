@@ -8,8 +8,8 @@ export const CHARACTER_COLORS: Record<Character, string> = {
   rin: '#FFCD5B',
   ren: '#EE963E',
   luka: '#E68FC4',
-  meiko: '#B43D30',
-  kaito: '#51679B',
+  meiko: '#E55245',
+  kaito: '#6E93E7',
 };
 
 const el = document.querySelector('#text');
