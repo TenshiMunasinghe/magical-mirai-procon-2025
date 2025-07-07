@@ -32,6 +32,13 @@
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
+.overlay-description {
+  color: #ffffff;
+  font-size: 16px;
+  margin: 0 0 10px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
 .character-boxes {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
