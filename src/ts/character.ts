@@ -1,3 +1,17 @@
+// Import all character images
+import miku1 from '../public/miku1.png';
+import miku2 from '../public/miku2.png';
+import rin1 from '../public/rin1.png';
+import rin2 from '../public/rin2.png';
+import ren1 from '../public/ren1.png';
+import ren2 from '../public/ren2.png';
+import luka1 from '../public/luka1.png';
+import luka2 from '../public/luka2.png';
+import meiko1 from '../public/meiko1.png';
+import meiko2 from '../public/meiko2.png';
+import kaito1 from '../public/kaito1.png';
+import kaito2 from '../public/kaito2.png';
+
 import { globalNow } from '.';
 import { ENDING_BUFFER_TIME, ENDING_START_TIME } from './ending';
 import { CHARACTER_COLORS } from './lyric';
@@ -12,6 +26,16 @@ export const characters = [
 ] as const;
 export type Character = (typeof characters)[number];
 
+// Character image mapping
+const characterImages: Record<Character, { img1: string; img2: string }> = {
+  miku: { img1: miku1, img2: miku2 },
+  rin: { img1: rin1, img2: rin2 },
+  ren: { img1: ren1, img2: ren2 },
+  luka: { img1: luka1, img2: luka2 },
+  meiko: { img1: meiko1, img2: meiko2 },
+  kaito: { img1: kaito1, img2: kaito2 },
+};
+
 export const characterElement: HTMLElement = document.querySelector(
   '.walking-character'
 ) as HTMLElement;
@@ -24,13 +48,15 @@ export const changeCharacter = (newCharacter: Character) => {
 
   currentCharacter = newCharacter;
   const character = currentCharacter;
+  const images = characterImages[character];
+
   characterElement.style.setProperty(
     '--character-img1',
-    `url('../public/${character}1.png')`
+    `url('${images.img1}')`
   );
   characterElement.style.setProperty(
     '--character-img2',
-    `url('../public/${character}2.png')`
+    `url('${images.img2}')`
   );
   document.body.style.setProperty(
     '--shooting-star-color',
@@ -45,13 +71,14 @@ export const createEndingCharacter = (character: Character, index: number) => {
   characterElement.dataset.character = character;
 
   // Set character images
+  const images = characterImages[character];
   characterElement.style.setProperty(
     '--character-img1',
-    `url('../public/${character}1.png')`
+    `url('${images.img1}')`
   );
   characterElement.style.setProperty(
     '--character-img2',
-    `url('../public/${character}2.png')`
+    `url('${images.img2}')`
   );
 
   // Position 4 ending characters evenly across screen
