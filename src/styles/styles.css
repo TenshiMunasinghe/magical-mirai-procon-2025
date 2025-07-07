@@ -1,7 +1,7 @@
 /* Define your local font */
 @font-face {
   font-family: 'receipt-font';
-  src: url('../static/receipt-font/receipt-font.ttf') format('truetype');
+  src: url('../public/receipt-font/receipt-font.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }

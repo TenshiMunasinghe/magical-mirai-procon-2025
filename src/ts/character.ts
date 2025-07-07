@@ -26,11 +26,11 @@ export const changeCharacter = (newCharacter: Character) => {
   const character = currentCharacter;
   characterElement.style.setProperty(
     '--character-img1',
-    `url('../static/${character}1.png')`
+    `url('../public/${character}1.png')`
   );
   characterElement.style.setProperty(
     '--character-img2',
-    `url('../static/${character}2.png')`
+    `url('../public/${character}2.png')`
   );
   document.body.style.setProperty(
     '--shooting-star-color',
@@ -47,11 +47,11 @@ export const createEndingCharacter = (character: Character, index: number) => {
   // Set character images
   characterElement.style.setProperty(
     '--character-img1',
-    `url('../static/${character}1.png')`
+    `url('../public/${character}1.png')`
   );
   characterElement.style.setProperty(
     '--character-img2',
-    `url('../static/${character}2.png')`
+    `url('../public/${character}2.png')`
   );
 
   // Position 4 ending characters evenly across screen

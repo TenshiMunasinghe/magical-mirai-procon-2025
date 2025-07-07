@@ -1,7 +1,7 @@
 /* Walking Character */
 .walking-character {
-  --character-img1: url('../static/miku1.png');
-  --character-img2: url('../static/miku2.png');
+  --character-img1: url('../public/miku1.png');
+  --character-img2: url('../public/miku2.png');
   position: fixed;
   bottom: 10%; /* Position on the street level */
   left: 15%; /* Keep character in one place on screen */
@@ -23,8 +23,8 @@
 /* Ending Characters - Completely independent from walking character */
 .ending-character {
   /* CSS Custom Properties */
-  --character-img1: url('../static/miku1.png');
-  --character-img2: url('../static/miku2.png');
+  --character-img1: url('../public/miku1.png');
+  --character-img2: url('../public/miku2.png');
   --end-position: 15%;
   --animation-delay: 0ms;
 
